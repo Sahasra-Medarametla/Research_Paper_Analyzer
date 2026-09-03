@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PaperMind | Research Paper Analyzer</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Google Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+
+<style>
+/* =========================================================
+   PAPER Q&A ASSISTANT
+========================================================= */
+
+.paper-assistant {
+    margin-top: 28px;
+    border: 1px solid #e1e4f2;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 18px 45px rgba(80, 70, 160, 0.10);
+    overflow: hidden;
+}
+
+.assistant-header {
+    padding: 22px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: linear-gradient(135deg, #f8f6ff, #f4f8ff);
+    border-bottom: 1px solid #e7e9f3;
+}
+
+.assistant-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.assistant-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 21px;
+    background: linear-gradient(135deg, #6847ed, #397df5);
+    box-shadow: 0 8px 20px rgba(104,71,237,.20);
+}
+
+.assistant-eyebrow {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    color: #6847ed;
+    margin-bottom: 3px;
+}
+
+.assistant-header h3 {
+    margin: 0;
+    color: #202940;
+    font-size: 19px;
+}
+
+.assistant-header p {
+    margin: 4px 0 0;
+    color: #7b849b;
+    font-size: 13px;
+}
+
+.assistant-status {
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 700;
+    color: #269b6b;
+    background: #eaf9f1;
+    padding: 9px 12px;
+    border-radius: 999px;
+}
+
+.assistant-status span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background: #2ab673;
+    box-shadow: 0 0 0 4px rgba(42,182,115,.12);
+}
+
+.chat-messages {
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 20px 22px;
+    background: #fbfcff;
+}
+
+.chat-welcome {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid #e7e2ff;
+    border-radius: 16px;
+    background: linear-gradient(135deg,#faf8ff,#f7fbff);
+}
+
+.chat-welcome-icon {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    color: #6847ed;
+    background: #eeeaff;
+}
+
+.chat-welcome strong {
+    color: #30384e;
+    font-size: 13px;
+}
+
+.chat-welcome p {
+    margin: 4px 0 0;
+    color: #7a8399;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.chat-message {
+    display: flex;
+    margin-bottom: 14px;
+}
+
+.chat-message.user {
+    justify-content: flex-end;
+}
+
+.chat-bubble {
+    max-width: 82%;
+    padding: 12px 15px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.chat-message.user .chat-bubble {
+    color: white;
+    background: linear-gradient(135deg,#6847ed,#397df5);
+    border-bottom-right-radius: 5px;
+}
+
+.chat-message.assistant .chat-bubble {
+    color: #46506a;
+    background: white;
+    border: 1px solid #e4e7f0;
+    border-bottom-left-radius: 5px;
+}
+
+.chat-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #7a8399;
+}
+
+.chat-loading span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6847ed;
+    animation: chatDot 1.1s infinite ease-in-out;
+}
+
+.chat-loading span:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.chat-loading span:nth-child(3) {
+    animation-delay: .30s;
+}
+
+@keyframes chatDot {
+    0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.suggested-questions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 22px 16px;
+    background: #fbfcff;
+}
+
+.suggestion-btn {
+    border: 1px solid #ddd9fb;
+    background: #f8f6ff;
+    color: #6251b7;
+    border-radius: 999px;
+    padding: 8px 11px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.suggestion-btn:hover {
+    transform: translateY(-1px);
+    background: #eeeaff;
+    border-color: #c9c0ff;
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 10px;
+    padding: 16px 22px 20px;
+    background: white;
+    border-top: 1px solid #e8eaf2;
+}
+
+#chatQuestion {
+    flex: 1;
+    resize: none;
+    min-height: 46px;
+    max-height: 130px;
+    border: 1px solid #dfe3ee;
+    border-radius: 14px;
+    padding: 13px 14px;
+    outline: none;
+    color: #30384e;
+    font: inherit;
+    font-size: 13px;
+    transition: .2s ease;
+}
+
+#chatQuestion:focus {
+    border-color: #8d77f3;
+    box-shadow: 0 0 0 4px rgba(104,71,237,.09);
+}
+
+.ask-question-button {
+    align-self: flex-end;
+    min-width: 88px;
+    height: 46px;
+    border: none;
+    border-radius: 13px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg,#6847ed,#397df5);
+    box-shadow: 0 8px 18px rgba(74,92,235,.18);
+}
+
+.ask-question-button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.chat-error {
+    display: none;
+    padding: 0 22px 18px;
+    color: #c43c48;
+    font-size: 12px;
+}
+
+@media (max-width: 700px) {
+    .assistant-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .assistant-status {
+        margin-left: 63px;
+    }
+
+    .chat-input-row {
+        flex-direction: column;
+    }
+
+    .ask-question-button {
+        width: 100%;
+    }
+
+    .chat-bubble {
+        max-width: 92%;
+    }
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     ANIMATED BACKGROUND
+========================================================= -->
+
+<div class="background">
+
+    <div class="animated-grid"></div>
+
+    <div class="light-orb orb-one"></div>
+
+    <div class="light-orb orb-two"></div>
+
+    <div class="light-orb orb-three"></div>
+
+
+    <div class="floating-lines">
+
+        <span class="line line-one"></span>
+
+        <span class="line line-two"></span>
+
+        <span class="line line-three"></span>
+
+    </div>
+
+
+    <div class="particles">
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+
+            <i class="bi bi-stars"></i>
+
+        </div>
+
+        <span>
+
+            Paper<span class="brand-highlight">Mind</span>
+
+        </span>
+
+    </div>
+
+
+    <div class="nav-badge">
+
+        <span class="online-dot"></span>
+
+        AI Research Assistant
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main-container">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="hero-section">
+
+        <div class="badge-pill">
+
+            <i class="bi bi-magic"></i>
+
+            AI-Powered Research Analysis
+
+        </div>
+
+
+        <h1>
+
+            Understand Research Papers
+
+            <span class="gradient-text">
+
+                Smarter & Faster
+
+            </span>
+
+        </h1>
+
+
+        <p class="hero-description">
+
+            Upload a research or conference paper and transform
+            complex academic content into clear, structured and
+            meaningful insights.
+
+        </p>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         UPLOAD / ANALYSIS CARD
+    ====================================================== -->
+
+    <section class="upload-card">
+
+        <div class="card-glow"></div>
+
+
+        <!-- HEADER -->
+
+        <div class="upload-header">
+
+            <div class="document-icon">
+
+                <i class="bi bi-file-earmark-pdf-fill"></i>
+
+            </div>
+
+
+            <div>
+
+                <h2>
+                    Analyze Your Research Paper
+                </h2>
+
+                <p>
+                    Upload a PDF to begin your intelligent analysis
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             UPLOAD AREA
+        ================================================== -->
+
+        <div
+            class="upload-area"
+            id="uploadArea"
+        >
+
+            <div class="upload-animation">
+
+                <div class="upload-circle">
+
+                    <i class="bi bi-cloud-arrow-up"></i>
+
+                </div>
+
+            </div>
+
+
+            <h3>
+
+                Drop your paper here
+
+            </h3>
+
+
+            <p>
+
+                or choose a PDF from your computer
+
+            </p>
+
+
+            <label
+                for="paperFile"
+                class="browse-button"
+            >
+
+                <i class="bi bi-folder2-open"></i>
+
+                Browse PDF
+
+            </label>
+
+
+            <input
+                type="file"
+                id="paperFile"
+                accept=".pdf,application/pdf"
+                hidden
+            >
+
+
+            <div class="file-support">
+
+                <i class="bi bi-shield-check"></i>
+
+                PDF files only • Secure document processing
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SELECTED FILE
+        ================================================== -->
+
+        <div
+            class="selected-file"
+            id="selectedFile"
+        >
+
+            <div class="file-left">
+
+                <div class="pdf-icon">
+
+                    <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                </div>
+
+
+                <div class="file-information">
+
+                    <div
+                        class="file-name"
+                        id="fileName"
+                    >
+                        Research Paper.pdf
+                    </div>
+
+
+                    <div
+                        class="file-size"
+                        id="fileSize"
+                    >
+                        0 MB
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="remove-file"
+                id="removeFile"
+                title="Remove file"
+            >
+
+                <i class="bi bi-x-lg"></i>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ANALYZE BUTTON
+        ================================================== -->
+
+        <button
+            class="analyze-button"
+            id="analyzeButton"
+            disabled
+        >
+
+            <span id="buttonContent">
+
+                <i class="bi bi-stars"></i>
+
+                Analyze Research Paper
+
+            </span>
+
+        </button>
+
+
+
+        <!-- =================================================
+             INITIAL STATUS
+        ================================================== -->
+
+        <div
+            class="analysis-status initial-status"
+            id="analysisStatus"
+        >
+
+            <div class="status-icon">
+
+                <i
+                    class="bi bi-upload"
+                    id="statusIcon"
+                ></i>
+
+            </div>
+
+
+            <div class="status-content">
+
+                <div
+                    class="status-title"
+                    id="statusTitle"
+                >
+                    Upload a paper to begin
+                </div>
+
+
+                <div
+                    class="status-message"
+                    id="statusMessage"
+                >
+                    Select a research or conference paper and
+                    we'll prepare it for intelligent analysis.
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PROGRESS
+        ================================================== -->
+
+        <div
+            class="progress-container"
+            id="progressContainer"
+        >
+
+            <div class="progress-top">
+
+                <span id="progressText">
+
+                    Preparing your paper...
+
+                </span>
+
+
+                <span id="progressPercent">
+
+                    0%
+
+                </span>
+
+            </div>
+
+
+            <div class="progress-bar-background">
+
+                <div
+                    class="progress-bar-fill"
+                    id="progressBar"
+                ></div>
+
+            </div>
+
+
+            <div class="processing-steps">
+
+
+                <div
+                    class="processing-step active"
+                    id="step1"
+                >
+
+                    <span class="step-circle">
+
+                        <i class="bi bi-file-earmark-text"></i>
+
+                    </span>
+
+                    <span>
+
+                        Reading document
+
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="processing-step"
+                    id="step2"
+                >
+
+                    <span class="step-circle">
+
+                        <i class="bi bi-search"></i>
+
+                    </span>
+
+                    <span>
+
+                        Extracting insights
+
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="processing-step"
+                    id="step3"
+                >
+
+                    <span class="step-circle">
+
+                        <i class="bi bi-stars"></i>
+
+                    </span>
+
+                    <span>
+
+                        Preparing analysis
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         REPORT SECTION
+         
+         Hidden until analysis is completed.
+    ====================================================== -->
+
+    <section
+        class="report-section"
+        id="reportSection"
+    >
+
+
+        <!-- REPORT HEADER -->
+
+        <div class="report-header">
+
+            <div class="report-title-area">
+
+                <div class="report-icon">
+
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="report-label">
+
+                        AI GENERATED REPORT
+
+                    </div>
+
+
+                    <h2>
+
+                        Research Paper Analysis
+
+                    </h2>
+
+
+                    <p id="reportFileName">
+
+                        Analysis of your uploaded paper
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="download-button"
+                id="downloadButton"
+            >
+
+                <i class="bi bi-download"></i>
+
+                Download Report
+
+            </button>
+
+        </div>
+
+
+
+        <!-- REPORT CONTENT -->
+
+        <div class="report-content">
+
+
+            <!-- OVERVIEW -->
+
+            <div class="report-section-block">
+
+                <div class="report-block-title">
+
+                    <span class="report-number">
+                        01
+                    </span>
+
+                    <span>
+                        Paper Overview
+                    </span>
+
+                </div>
+
+
+                <div class="overview-grid">
+
+                    <div class="overview-item">
+
+                        <span>
+                            Title
+                        </span>
+
+                        <strong id="reportPaperTitle">
+                            Research Paper
+                        </strong>
+
+                    </div>
+
+
+                    <div class="overview-item">
+
+                        <span>
+                            Document Type
+                        </span>
+
+                        <strong>
+                            Research / Conference Paper
+                        </strong>
+
+                    </div>
+
+
+                    <div class="overview-item">
+
+                        <span>
+                            Analysis Type
+                        </span>
+
+                        <strong>
+                            NLP + LLM
+                        </strong>
+
+                    </div>
+
+
+                    <div class="overview-item">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <strong class="success-text">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            Successfully Analyzed
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SUMMARY -->
+
+            <div class="report-section-block">
+
+                <div class="report-block-title">
+
+                    <span class="report-number">
+                        02
+                    </span>
+
+                    <span>
+                        Executive Summary
+                    </span>
+
+                </div>
+
+
+                <p class="report-text">
+
+                    This section will contain a concise,
+                    easy-to-understand summary of the uploaded
+                    research paper. The system will identify the
+                    central problem, proposed approach, major
+                    findings and overall contribution of the study.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- PROBLEM & OBJECTIVE -->
+
+            <div class="report-two-column">
+
+
+                <div class="report-section-block">
+
+                    <div class="report-block-title">
+
+                        <span class="report-number">
+                            03
+                        </span>
+
+                        <span>
+                            Research Problem
+                        </span>
+
+                    </div>
+
+
+                    <p class="report-text">
+
+                        The research problem identified from
+                        the paper will be summarized here in a
+                        clear and understandable format.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="report-section-block">
+
+                    <div class="report-block-title">
+
+                        <span class="report-number">
+                            04
+                        </span>
+
+                        <span>
+                            Objectives
+                        </span>
+
+                    </div>
+
+
+                    <ul class="report-list">
+
+                        <li>
+                            Identify the primary research objective.
+                        </li>
+
+                        <li>
+                            Understand the proposed methodology.
+                        </li>
+
+                        <li>
+                            Summarize the intended contribution.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- METHODOLOGY -->
+
+            <div class="report-section-block">
+
+                <div class="report-block-title">
+
+                    <span class="report-number">
+                        05
+                    </span>
+
+                    <span>
+                        Methodology
+                    </span>
+
+                </div>
+
+
+                <p class="report-text">
+
+                    The methodology section will describe the
+                    techniques, models, algorithms, datasets and
+                    processing pipeline used by the researchers.
+
+                </p>
+
+
+                <div class="method-tags">
+
+                    <span>
+                        NLP
+                    </span>
+
+                    <span>
+                        Machine Learning
+                    </span>
+
+                    <span>
+                        Deep Learning
+                    </span>
+
+                    <span>
+                        Large Language Models
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESULTS -->
+
+            <div class="report-two-column">
+
+
+                <div class="report-section-block">
+
+                    <div class="report-block-title">
+
+                        <span class="report-number">
+                            06
+                        </span>
+
+                        <span>
+                            Key Findings
+                        </span>
+
+                    </div>
+
+
+                    <ul class="report-list">
+
+                        <li>
+                            Major findings extracted from the paper.
+                        </li>
+
+                        <li>
+                            Important experimental observations.
+                        </li>
+
+                        <li>
+                            Main performance outcomes.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="report-section-block">
+
+                    <div class="report-block-title">
+
+                        <span class="report-number">
+                            07
+                        </span>
+
+                        <span>
+                            Limitations
+                        </span>
+
+                    </div>
+
+
+                    <ul class="report-list">
+
+                        <li>
+                            Limitations identified by the authors.
+                        </li>
+
+                        <li>
+                            Dataset or methodology constraints.
+                        </li>
+
+                        <li>
+                            Areas requiring further research.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESEARCH GAP -->
+
+            <div class="research-gap-box">
+
+                <div class="gap-icon">
+
+                    <i class="bi bi-lightbulb"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Research Gap & Future Scope
+                    </h3>
+
+
+                    <p>
+
+                        The final system will identify possible
+                        research gaps, unresolved challenges and
+                        future directions based on the uploaded paper.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- KEYWORDS -->
+
+            <div class="report-section-block">
+
+                <div class="report-block-title">
+
+                    <span class="report-number">
+                        08
+                    </span>
+
+                    <span>
+                        Key Concepts
+                    </span>
+
+                </div>
+
+
+                <div class="keyword-list">
+
+                    <span>
+                        Natural Language Processing
+                    </span>
+
+                    <span>
+                        Research Analysis
+                    </span>
+
+                    <span>
+                        Semantic Analysis
+                    </span>
+
+                    <span>
+                        Large Language Models
+                    </span>
+
+                    <span>
+                        AI
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =====================================================
+             PAPER Q&A ASSISTANT
+        ====================================================== -->
+
+        <div id="paperAssistant" class="paper-assistant">
+
+            <div class="assistant-header">
+
+                <div class="assistant-title-wrap">
+
+                    <div class="assistant-icon">
+                        <i class="bi bi-chat-square-text"></i>
+                    </div>
+
+                    <div>
+                        <div class="assistant-eyebrow">
+                            INTERACTIVE PAPER ASSISTANT
+                        </div>
+
+                        <h3>
+                            Ask Questions About This Paper
+                        </h3>
+
+                        <p>
+                            Ask anything about the uploaded research paper.
+                            Answers are grounded in the document.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="assistant-status">
+                    <span></span>
+                    Paper Context Active
+                </div>
+
+            </div>
+
+
+            <div id="chatMessages" class="chat-messages">
+
+                <div class="chat-welcome">
+
+                    <div class="chat-welcome-icon">
+                        <i class="bi bi-stars"></i>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Your paper is ready for questions
+                        </strong>
+
+                        <p>
+                            Try asking about the methodology,
+                            dataset, algorithms, results, limitations
+                            or research gap.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="suggested-questions">
+
+                <button
+                    type="button"
+                    class="suggestion-btn"
+                    data-question="What is the main research problem addressed in this paper?"
+                >
+                    Main problem
+                </button>
+
+                <button
+                    type="button"
+                    class="suggestion-btn"
+                    data-question="What methodology or approach does the paper use?"
+                >
+                    Methodology
+                </button>
+
+                <button
+                    type="button"
+                    class="suggestion-btn"
+                    data-question="What dataset was used in the study?"
+                >
+                    Dataset
+                </button>
+
+                <button
+                    type="button"
+                    class="suggestion-btn"
+                    data-question="What are the main results of the paper?"
+                >
+                    Results
+                </button>
+
+            </div>
+
+
+            <div class="chat-input-row">
+
+                <textarea
+                    id="chatQuestion"
+                    rows="1"
+                    maxlength="2000"
+                    placeholder="Ask something about this paper..."
+                ></textarea>
+
+                <button
+                    type="button"
+                    id="askQuestionButton"
+                    class="ask-question-button"
+                >
+                    <i class="bi bi-send-fill"></i>
+                    Ask
+                </button>
+
+            </div>
+
+
+            <div id="chatError" class="chat-error"></div>
+
+        </div>
+
+
+        <!-- REPORT FOOTER -->
+
+        <div class="report-footer">
+
+            <div>
+
+                <i class="bi bi-stars"></i>
+
+                Generated using Intelligent Research Analysis
+
+            </div>
+
+
+            <div>
+
+                <i class="bi bi-chat-dots"></i>
+
+                Ask questions about this paper
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FEATURES
+    ====================================================== -->
+
+    <section class="features">
+
+        <div class="feature">
+
+            <div class="feature-icon purple">
+
+                <i class="bi bi-file-text"></i>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Smart Extraction
+                </strong>
+
+                <span>
+                    Key information from your paper
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="feature">
+
+            <div class="feature-icon blue">
+
+                <i class="bi bi-lightning-charge"></i>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    AI-Powered Analysis
+                </strong>
+
+                <span>
+                    Clear and meaningful insights
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="feature">
+
+            <div class="feature-icon green">
+
+                <i class="bi bi-chat-dots"></i>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Interactive Assistant
+                </strong>
+
+                <span>
+                    Ask questions about your paper
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        <span>
+            Intelligent Research Paper Analyzer
+        </span>
+
+        <span class="footer-dot">
+            •
+        </span>
+
+        <span>
+            NLP + Large Language Models
+        </span>
+
+    </footer>
+
+
+</main>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
